@@ -1,4 +1,4 @@
-package lpoo.sym;
+package lpoo.sym.expressions;
 
 public final class Constant
   extends Expression

@@ -1,5 +1,4 @@
-package lpoo.sym;
-
+package lpoo.sym.expressions;
 public final class Mul
   extends BinaryExpression
 {

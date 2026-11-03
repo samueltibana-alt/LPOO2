@@ -1,4 +1,4 @@
-package lpoo.sym;
+package lpoo.sym.expression;
 
 public final class X
   extends Expression

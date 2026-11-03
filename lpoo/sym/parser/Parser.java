@@ -112,54 +112,75 @@ public class Parser
     return new Vector3(x,y,z);
   }
 
-  private void expression()
+  private Expression exp()
   {
-    mul();
-    while(token.type == TokenType.ADD_OP || token.type == TokenType.SUB_OP)
+    Expression e = mult();
+    advance();
+    while(scanner != "\0")
     {
-      advance();
-      mul();
-    }
-  }
-
-  private void mul()
-  {
-    pow();
-    while(token.type == TokenType.MUL_OP || token.type == TokenType.DIV_OP)
-    {
-      advance();
-      pow();
-    }
-  }
-  private void pow()
-  {
-    if(token.type == TokenType.ADD_OP||token.type == TokenType.SUB_OP)
-    {
+      if(token.type == TokenType.ADD_OP)
+      {
+      e = add(e, mult());
+      }
+      else if(scanner == TokenType.SUB_OP)
+      {
+      e = sub(e,mult());
+      }
       advance();
     }
-    primary();
-    while(token.type == TokenType.POW_OP)
-    {
-      pow();
-    }
+    return e;
   }
-  private void primary()
+  private Expression mult()
   {
-    advance()
-    if(token.type == TokenType.NAME)
+    Expression m = power();
+    advance();
+    while(scanner != "\0")
     {
-        
+      if(token.type == TokenType.MUL_OP)
+      {
+      m = Mul(m, power());
+      }
+      else if(scanner == TokenType.DIV_OP)
+      {
+      m = Div(m,power());
+      }
+      advance();
     }
-    else if(token.type == TokenType.FLOAT)
+    return m;
+  }
+  private Expression power()
+  {
+    if(token.type == TokenType.SUB_OP)
     {
-
+      advance();
+      Expresssion p = Minus(primary());
     }
     else
     {
-      expression();
+      if(token.type == TokenType.ADD_OP)
+      {
+        advance();
+      }
+      Expression p = primary();
     }
+    if(token.type == TokenType.POW_OP)
+    {
+      p = Pow(p, power());
+    }
+    return p;
   }
-
+  private Expression primary()
+  {
+    if(token.type == TokenType.FLOAT)
+    {
+      return Constant(Token.Float(token.lexeme).value());
+    }
+    else if(token.type == TokenType.NAME)
+    {
+      
+    }
+    
+  }
   private void error(int code, Object... args)
     throws ParseException
   {
@@ -211,6 +232,7 @@ public class Parser
 
   private Scanner scanner;
   private Token token;
+  private List<Expression> ListOfExp = new ArrayList<>();//lista de expressões a serem calculadas
 
   static final int SYNTAX = 0;
   static final int IDENTIFIER_EXPECTED = 1;
