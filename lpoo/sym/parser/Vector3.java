@@ -67,18 +67,7 @@ public final class Vector3
   {
     return (float)Math.sqrt(normSquared());
   }
-  public static Vector3 getPose(Vector3 point,Vector3 t, Matrix3 rot)
-  {
-    if( point == null)
-    {
-      point = new Vector3(0,0,0);
-    }
-    Vector3 rotate = (rot!=null) ?rot.mulVect(point): point;
-    if(t != null){
-    return rotate.add(t);
-    }
-    return rotate;
-  }
+
   @Override
   public String toString()
   {

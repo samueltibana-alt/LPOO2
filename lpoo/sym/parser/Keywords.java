@@ -4,7 +4,7 @@ import java.util.TreeMap;
 
 /**
  *
- * @author insert your name here
+ * @author Samuel kiyoshi
  */
 final class Keywords
 {
@@ -23,6 +23,10 @@ final class Keywords
     map = new TreeMap<>();
     add("eval", TokenType.EVAL);
     add("diff", TokenType.DIFF);
+    add("list",TokenType.LIST);
+    add("clear",TokenType.CLEAR);
+    add("assingment",TokenType.ASSINGMENT);
+    add("define",TokenType.DEFINE);
     add("exit", TokenType.EXIT);
   }
 

@@ -14,16 +14,16 @@ public class Function
   }
 
   @Override
-  public float eval(float x)
+  public float eval(float x,float y,float z)
   {
-    return function.eval(arg.eval(x));
+    return function.eval(arg.eval(x,y,z),0,0);
   }
 
   @Override
-  public Expression diff()
+  public Expression diff(String var)
   {
-    Expression f = new Function(function.diff(), arg); 
-    return (new Mul(f, arg.diff())).simplify();
+    Expression f = new Function(function.diff(var), arg); 
+    return (new Mul(f, arg.diff(var))).simplify();
   }
 
   @Override
@@ -54,14 +54,15 @@ abstract class NativeFunction
 final class Sin
   extends NativeFunction
 {
+
   @Override
-  public float eval(float x)
+  public float eval(float x,float y, float z)
   {
     return (float)Math.sin(x);
   }
 
   @Override
-  public Expression diff()
+  public Expression diff(String var)
   {
     return COS;
   }
@@ -78,13 +79,13 @@ final class Cos
   extends NativeFunction
 {
   @Override
-  public float eval(float x)
+  public float eval(float x,float y, float z)
   {
     return (float)Math.cos(x);
   }
 
   @Override
-  public Expression diff()
+  public Expression diff(String var)
   {
     return new Minus(SIN);
   }
@@ -94,5 +95,4 @@ final class Cos
   {
     return "cos";
   }
-
 } // Cos

@@ -15,13 +15,13 @@ public final class Constant
   }
 
   @Override
-  public float eval(float x)
+  public float eval(float x,float y,float z)
   {
     return value;
   }
 
   @Override
-  public Expression diff()
+  public Expression diff(String var)
   {
     return ZERO;
   }

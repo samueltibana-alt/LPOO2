@@ -14,20 +14,20 @@ public final class Pow
   }
 
   @Override
-  public float eval(float x)
+  public float eval(float x,float y,float z)
   {
-    return (float)Math.pow(e1.eval(x), ((Constant)e2).value);
+    return (float)Math.pow(e1.eval(x,y,z), ((Constant)e2).value);
   }
 
   @Override
-  public Expression diff()
+  public Expression diff(String var)
   {
     float exp = ((Constant)e2).value;
 
     if (0 == exp)
       return Constant.ZERO;
 
-    Expression bd = e1.diff();
+    Expression bd = e1.diff(var);
 
     if (1 == exp)
       return bd;

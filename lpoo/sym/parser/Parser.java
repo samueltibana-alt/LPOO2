@@ -1,11 +1,8 @@
 package lpoo.sym.parser;
+import lpoo.sym.expressions.*;
 
 import lpoo.sym.*;
 
-/**
- *
- * @author Samuel Kiyoshi
- */
 public class Parser
 {
   public Parser()
@@ -24,65 +21,79 @@ public class Parser
     throws ParseException
   {
     Command c = null;
+    Vector3 args;
 
-    if (token.type == TokenType.EVAL)// EVAL
+    if (token.type == TokenType.EVAL)
     {
       advance(); 
       match(TokenType.LPAREN);
-      expression();
+      Expression e = exp();
       match(TokenType.COMMA);
-      args();
+      args = args();
       match(TokenType.RPAREN);
       c = Command.eval;
+      c.setArguments(e,args);
     }
-     else if (token.type == TokenType.DEFINE)// DEFINE
+    else if (token.type == TokenType.DEFINE)
     {
       advance(); 
-      name();
-      if(scanner.nextToken != '\0')
+      String name = name();
+      Expression e = null;
+      if(token.type == TokenType.ASSIGN_OP)
       {
-      match(TokenType.ASSIGN_OP);
-      expression();
+        match(TokenType.ASSIGN_OP);
+        e = exp();
       }
       c = Command.define;
+      c.setArguments(name,e);
     }
-    else if (token.type == TokenType.Diff)// DIFF
+    else if (token.type == TokenType.DIFF)
     {
       advance();
       match(TokenType.LPAREN);
-      expression();
+      Expression e = exp();
       match(TokenType.COMMA);
-      name();
+      String var = name();
       match(TokenType.RPAREN);
       c = Command.diff;
+      c.setArguments(e,var);
     }
-    else if (token.type == TokenType.ASSINGMENT)// ASSINGMENT
+    else if (token.type == TokenType.ASSINGMENT)
     {
       advance();
-      match(TokenType.LPAREN);
-      name();
-      match(TokenType.COMMA);
-      expression();
-      match(TokenType.RPAREN);
+      String name = name();
+      match(TokenType.ASSIGN_OP);
+      Expression e = exp();
       c = Command.assingment;
+      c.setArguments(name,e);
     }
-    else if( token.type == TokenType.CLEAR)
+    else if(token.type == TokenType.CLEAR)
     {
       advance();
       c = Command.clear;
+      try{
+        String name = name();
+        c.setArguments(name);
+      }
+      catch(ParseException excep)
+      {
+        //do nothing 
+      }
     }
-    else if( token.type == TokenType.LIST)
+    else if(token.type == TokenType.LIST)
     {
       advance();
       c = Command.list;
     }
     else if (token.type == TokenType.EXIT)
     {
-      advance(); // EXIT
+      advance();
       c = Command.exit;
     }
+    
     if (token.type != TokenType.EOI)
       error(SYNTAX);
+      
     return c;
   }
 
@@ -93,94 +104,145 @@ public class Parser
       error(NUMBER_EXPECTED);
 
     float x = ((Token.Float)token).value();
-
     advance();
+    
     match(TokenType.COMMA);
+    
     if (token.type != TokenType.FLOAT)
       error(NUMBER_EXPECTED);
 
     float y = ((Token.Float)token).value();
-
     advance();
+    
     match(TokenType.COMMA);
+    
     if (token.type != TokenType.FLOAT)
       error(NUMBER_EXPECTED);
 
     float z = ((Token.Float)token).value();
-
     advance();
+    
     return new Vector3(x,y,z);
   }
 
   private Expression exp()
+    throws ParseException
   {
     Expression e = mult();
-    advance();
-    while(scanner != "\0")
+    while(token.type == TokenType.ADD_OP || token.type == TokenType.SUB_OP)
     {
       if(token.type == TokenType.ADD_OP)
       {
-      e = add(e, mult());
+        match(TokenType.ADD_OP);
+        e = new Add(e, mult());
       }
-      else if(scanner == TokenType.SUB_OP)
+      else
       {
-      e = sub(e,mult());
+        match(TokenType.SUB_OP);
+        e = new Sub(e,mult());
       }
-      advance();
     }
     return e;
   }
+
   private Expression mult()
+    throws ParseException
   {
     Expression m = power();
-    advance();
-    while(scanner != "\0")
+    while(token.type == TokenType.MUL_OP || token.type == TokenType.DIV_OP)
     {
       if(token.type == TokenType.MUL_OP)
       {
-      m = Mul(m, power());
+        match(TokenType.MUL_OP);
+        m = new Mul(m, power());
       }
-      else if(scanner == TokenType.DIV_OP)
+      else
       {
-      m = Div(m,power());
+        match(TokenType.DIV_OP);
+        m = new Div(m, power());
       }
-      advance();
     }
     return m;
   }
+
   private Expression power()
+    throws ParseException
   {
+    Expression p;
     if(token.type == TokenType.SUB_OP)
     {
-      advance();
-      Expresssion p = Minus(primary());
+      match(TokenType.SUB_OP);
+      p = new Minus(primary());
     }
     else
     {
       if(token.type == TokenType.ADD_OP)
       {
-        advance();
+        match(TokenType.ADD_OP);
       }
-      Expression p = primary();
+      p = primary();
     }
+    
     if(token.type == TokenType.POW_OP)
     {
-      p = Pow(p, power());
+      match(TokenType.POW_OP);
+      p = new Pow(p, realValue());
     }
     return p;
   }
+
   private Expression primary()
+    throws ParseException
   {
     if(token.type == TokenType.FLOAT)
     {
-      return Constant(Token.Float(token.lexeme).value());
+      Expression e = new Constant(((Token.Float)token).value());
+      advance();
+      return e;
     }
     else if(token.type == TokenType.NAME)
     {
-      
+      String lex = token.lexeme;
+      advance();
+      if(lex.equals("x"))
+      {
+        return new X();
+      }
+      else if(lex.equals("y"))
+      {
+        return new Y();
+      }
+      else if(lex.equals("z"))
+      {
+        return new Z();
+      }
+      else if (Functions.get(lex)==null)
+      {
+        error(UNEXPECTED,token);
+      }
+      return Functions.get(lex);
     }
-    
+    else if(token.type == TokenType.LPAREN)
+    {
+      match(TokenType.LPAREN);
+      Expression e = exp();
+      match(TokenType.RPAREN);
+      return e;
+    }
+    return null;
   }
+
+  private float realValue()
+    throws ParseException
+  {
+    if (token.type != TokenType.FLOAT)
+      error(NUMBER_EXPECTED);
+      
+    float number = ((Token.Float)token).value();
+    advance();
+    return number;
+  }
+
   private void error(int code, Object... args)
     throws ParseException
   {
@@ -194,6 +256,7 @@ public class Parser
   }
 
   private String name()
+    throws ParseException
   {
     if(token.type != TokenType.NAME)
     {
@@ -232,7 +295,6 @@ public class Parser
 
   private Scanner scanner;
   private Token token;
-  private List<Expression> ListOfExp = new ArrayList<>();//lista de expressões a serem calculadas
 
   static final int SYNTAX = 0;
   static final int IDENTIFIER_EXPECTED = 1;
@@ -249,4 +311,4 @@ public class Parser
     "Unexpected '%1$s'"
   };
 
-} // Parser
+}

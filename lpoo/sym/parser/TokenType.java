@@ -2,7 +2,7 @@ package lpoo.sym.parser;
 
 /**
  *
- * @author insert your name here
+ * @author Samuel Kiyoshi
  */
 enum TokenType
 {
@@ -19,7 +19,11 @@ enum TokenType
   COMMA,
   NAME,
   EVAL,
+  DEFINE,
   DIFF,
+  LIST,
+  ASSINGMENT,
+  CLEAR,
   EXIT,
   ERROR;
 
@@ -44,7 +48,11 @@ enum TokenType
     ",",
     "name",
     "eval",
+    "define",
     "diff",
+    "list",
+    "assingment",
+    "clear",
     "exit",
     "<error>"
   };

@@ -9,15 +9,15 @@ public final class Minus
   }
 
   @Override
-  public float eval(float x)
+  public float eval(float x,float y,float z)
   {
-    return -e.eval(x);
+    return -e.eval(x,y,z);
   }
 
   @Override
-  public Expression diff()
+  public Expression diff(String var)
   {
-    return (new Minus(e.diff())).simplify();
+    return (new Minus(e.diff(var))).simplify();
   }
 
   @Override

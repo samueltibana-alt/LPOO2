@@ -9,16 +9,16 @@ public final class Div
   }
 
   @Override
-  public float eval(float x)
+  public float eval(float x,float y,float z)
   {
-    return e1.eval(x) / e2.eval(x);
+    return e1.eval(x,y,z) / e2.eval(x,y,z);
   }
 
   @Override
-  public Expression diff()
+  public Expression diff(String var )
   {
-    Expression t1 = (new Mul(e1.diff(), e2)).simplify();
-    Expression t2 = (new Mul(e1, e2.diff())).simplify();
+    Expression t1 = (new Mul(e1.diff(var), e2)).simplify();
+    Expression t2 = (new Mul(e1, e2.diff(var))).simplify();
 
     return (new Div(new Sub(t1, t2), new Mul(e2, e2))).simplify();
   }
