@@ -6,6 +6,7 @@ public final class Constant
   public final static Constant ZERO = new Constant(0);
   public final static Constant ONE = new Constant(1);
   public final static Constant PI = new Constant((float)Math.PI);
+  public final static Constant E = new Constant((float)Math.exp(1));
  
   public final float value;
 

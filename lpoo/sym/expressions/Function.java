@@ -13,16 +13,22 @@ public class Function
     return new Function(NativeFunction.COS, arg);
   }
 
-  @Override
-  public float eval(float x,float y,float z)
+  public static final Function ln(Expression arg)
   {
-    return function.eval(arg.eval(x,y,z),0,0);
+    return new Function(NativeFunction.LN, arg);
+  }
+
+  @Override
+  public float eval(float x, float y, float z)
+  {
+    return function.eval(arg.eval(x, y, z), 0, 0);
   }
 
   @Override
   public Expression diff(String var)
   {
-    Expression f = new Function(function.diff(var), arg); 
+    Expression df = function.diff(var);
+    Expression f = (df instanceof NativeFunction) ? new Function(df, arg) : df;
     return (new Mul(f, arg.diff(var))).simplify();
   }
 
@@ -48,15 +54,15 @@ abstract class NativeFunction
 {
   static final NativeFunction SIN = new Sin();
   static final NativeFunction COS = new Cos();
+  static final NativeFunction LN = new Ln();
 
 } // NativeFunction
 
 final class Sin
   extends NativeFunction
 {
-
   @Override
-  public float eval(float x,float y, float z)
+  public float eval(float x, float y, float z)
   {
     return (float)Math.sin(x);
   }
@@ -79,7 +85,7 @@ final class Cos
   extends NativeFunction
 {
   @Override
-  public float eval(float x,float y, float z)
+  public float eval(float x, float y, float z)
   {
     return (float)Math.cos(x);
   }
@@ -95,4 +101,29 @@ final class Cos
   {
     return "cos";
   }
+
 } // Cos
+// E
+
+final class Ln
+  extends NativeFunction
+{
+  @Override
+  public float eval(float x, float y, float z)
+  {
+    return (float)Math.log(x);
+  }
+
+  @Override
+  public Expression diff(String var)
+  {
+    return new Div(Constant.ONE, Var.X);
+  }
+
+  @Override
+  public String toString()
+  {
+    return "ln";
+  }
+
+} // Ln

@@ -186,62 +186,61 @@ public class Parser
     if(token.type == TokenType.POW_OP)
     {
       match(TokenType.POW_OP);
-      p = new Pow(p, realValue());
+      p = new Pow(p, exp());
     }
     return p;
   }
-
-  private Expression primary()
-    throws ParseException
-  {
-    if(token.type == TokenType.FLOAT)
-    {
-      Expression e = new Constant(((Token.Float)token).value());
+private Expression primary() throws ParseException {
+  switch (token.type) {
+    case FLOAT -> {
+      Expression e = new Constant(((Token.Float) token).value());
       advance();
       return e;
     }
-    else if(token.type == TokenType.NAME)
-    {
-      String lex = token.lexeme;
+
+    case NAME -> {
+      Token nameToken = token;
+      String lex = nameToken.lexeme;
       advance();
-      if(lex.equals("x"))
-      {
-        return new X();
+
+      switch (lex) {
+        case "x" -> { return Var.X; }
+        case "y" -> { return Var.Y; }
+        case "z" -> { return Var.Z; }
+        default -> {
+          if(token.type== TokenType.LPAREN)
+            {
+          match(TokenType.LPAREN);
+          Expression arg = exp();
+          match(TokenType.RPAREN);
+          return Functions.get(lex, arg);
+          }
+          else
+          {
+          if(Functions.get(lex)==null){
+            error(UNEXPECTED,lex);
+          }
+          return Functions.get(lex);
+          }
+        }
       }
-      else if(lex.equals("y"))
-      {
-        return new Y();
-      }
-      else if(lex.equals("z"))
-      {
-        return new Z();
-      }
-      else if (Functions.get(lex)==null)
-      {
-        error(UNEXPECTED,token);
-      }
-      return Functions.get(lex);
     }
-    else if(token.type == TokenType.LPAREN)
-    {
+
+    case LPAREN -> {
       match(TokenType.LPAREN);
       Expression e = exp();
       match(TokenType.RPAREN);
       return e;
     }
-    return null;
-  }
 
-  private float realValue()
-    throws ParseException
-  {
-    if (token.type != TokenType.FLOAT)
-      error(NUMBER_EXPECTED);
-      
-    float number = ((Token.Float)token).value();
-    advance();
-    return number;
+    default -> {
+      error(UNEXPECTED, token);
+      return null;
+    }
   }
+}
+
+
 
   private void error(int code, Object... args)
     throws ParseException

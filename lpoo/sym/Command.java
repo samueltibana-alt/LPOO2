@@ -35,7 +35,7 @@ public abstract class Command
       float x = vec.x;
       float y = vec.y;
       float z = vec.z;
-      exp.eval(x,y,z);
+      System.out.println(exp.eval(x,y,z));
       return true;
     }
   };
@@ -47,7 +47,7 @@ public abstract class Command
     {
       Expression exp = (Expression) arguments[0];
       String var = (String) arguments[1];
-      exp.diff(var);
+      System.out.println(exp.diff(var).toString());
       return true;
     }
   };
@@ -68,7 +68,7 @@ public abstract class Command
       String name = (String) arguments[0];
       Expression exp = (Expression) arguments[1];
       Functions.add(name,exp);
-      return false;
+      return true;
     }
   };
     public static final Command list = new Command()
@@ -77,7 +77,7 @@ public abstract class Command
     protected boolean run()
     {
       Functions.list();
-      return false;
+      return true;
     }
   };
     public static final Command clear = new Command()
@@ -94,7 +94,7 @@ public abstract class Command
       {
       Functions.clear();
       }
-      return false;
+      return true;
     }
   };
     public static final Command define = new Command()
@@ -112,7 +112,7 @@ public abstract class Command
       {
       Functions.add(name);
       }
-      return false;
+      return true;
     }
   };
 
