@@ -4,7 +4,7 @@ import lpoo.sym.parser.Vector3;
 
 /**
  *
- * @author insert your name here
+ * @author Samuel kiyoshi
  */
 public abstract class Command
 {
@@ -47,7 +47,7 @@ public abstract class Command
     {
       Expression exp = (Expression) arguments[0];
       String var = (String) arguments[1];
-      System.out.println(exp.diff(var).toString());
+      System.out.println(exp.diff(var).simplify().toString());
       return true;
     }
   };
@@ -85,7 +85,7 @@ public abstract class Command
     @Override
     protected boolean run()
     {
-      if(arguments[0] != null)
+      if(arguments != null)
       {
       String name = (String) arguments[0];
       Functions.clear(name);

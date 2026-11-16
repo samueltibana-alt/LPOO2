@@ -1,5 +1,8 @@
 package lpoo.sym.expressions;
-
+/**
+ *
+ * @author Samuel kiyoshi
+ */
 public abstract class BinaryExpression
   extends Expression
 {

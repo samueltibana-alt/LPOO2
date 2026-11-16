@@ -2,7 +2,10 @@ package lpoo.sym.parser;
 import lpoo.sym.expressions.*;
 
 import lpoo.sym.*;
-
+/**
+ *
+ * @author Samuel kiyoshi
+ */
 public class Parser
 {
   public Parser()
@@ -186,7 +189,7 @@ public class Parser
     if(token.type == TokenType.POW_OP)
     {
       match(TokenType.POW_OP);
-      p = new Pow(p, exp());
+      p = new Pow(p, power());
     }
     return p;
   }
@@ -261,7 +264,7 @@ private Expression primary() throws ParseException {
     {
       error(IDENTIFIER_EXPECTED);
     }
-    String name = token.toString();
+    String name = token.lexeme;
     advance();
     return name;
   }

@@ -1,81 +1,94 @@
 package lpoo.sym.expressions;
 
 import java.util.TreeMap;
-
+/**
+ *
+ * @author Samuel kiyoshi
+ */
 public class Functions {
 
   public interface ExpressionSupplier {
     Expression get(Expression arg);
   }
 
-  private static TreeMap<String, ExpressionSupplier> map = new TreeMap<>();
+  // Dois mapas separados
+  private static final TreeMap<String, ExpressionSupplier> defaultMap = new TreeMap<>();
+  private static final TreeMap<String, ExpressionSupplier> userMap = new TreeMap<>();
 
   static {
-    registerDefaults();
+    defaultMap.put("sin", arg -> Function.sin(arg));
+    defaultMap.put("cos", arg -> Function.cos(arg));
+    defaultMap.put("ln", arg -> Function.ln(arg));
+    defaultMap.put("e", arg -> Constant.E);
+    defaultMap.put("pi", arg -> Constant.PI);
   }
 
-  private static void registerDefaults() {
-    map.put("sin", arg -> Function.sin(arg));
-    map.put("cos", arg -> Function.cos(arg));
-    map.put("ln", arg -> Function.ln(arg));
-    Functions.add("e", Constant.E);
-    Functions.add("pi", Constant.PI);
-
-  }
-
+  // Adiciona apenas no mapa do usuário
   public static void add(String name, Expression exp) {
     if (exp == null) {
-      map.put(name, null);
+      userMap.put(name, null);
     } else {
-      map.put(name, arg -> exp);
+      userMap.put(name, arg -> exp);
     }
   }
 
   public static void add(String name) {
-    map.put(name, null);
+    userMap.put(name, null);
   }
 
   public static void clear() {
-    map.clear();
-    registerDefaults();
+    userMap.clear();
   }
 
   public static void clear(String name) {
-    map.remove(name);
+    userMap.remove(name);
   }
 
-  // Para funções cridadas pelo usuario
+  private static ExpressionSupplier findSupplier(String name) {
+    ExpressionSupplier supplier = userMap.get(name);
+    if (supplier == null) {
+      supplier = defaultMap.get(name);
+    }
+    return supplier;
+  }
+
   public static Expression get(String name) {
-    ExpressionSupplier supplier = map.get(name);
-    Expression result;
-    if (supplier != null) {
-      result = supplier.get(null);
-    } else {
-      result = null;
+      ExpressionSupplier supplier = findSupplier(name);
+      
+      if (supplier != null) {
+        Expression result= supplier.get(null);
+        return result;
+      } else {
+        return null;
+      }
     }
-
-    return result;
-  }
-
-  // Para funções fundamentais criadas estaticamente
   public static Expression get(String name, Expression arg) {
-    ExpressionSupplier supplier = map.get(name);
-    Expression result;
+    ExpressionSupplier supplier = findSupplier(name);
+    
     if (supplier != null) {
-      result = supplier.get(arg);
+      Expression result = supplier.get(arg);
+      return result;
     } else {
-      result = null;
+      return null;
     }
-
-    return result;
   }
 
   public static void list() {
-    System.out.println("--- Variáveis e Funções Salvas ---");
-    map.forEach((name, supplier) -> {
+    System.out.println("--- Funções Nativas ---");
+    defaultMap.forEach((name, supplier) -> {
       String value = (supplier != null) ? supplier.get(Var.X).toString() : "<indefinida>";
       System.out.println(name + " : " + value);
     });
+
+    System.out.println("\n--- Variáveis e Funções do Usuário ---");
+    if (userMap.isEmpty()) {
+      System.out.println("<nenhuma>");
+    } else {
+      userMap.forEach((name, supplier) -> {
+        String value = (supplier != null) ? supplier.get(Var.X).toString() : "<indefinida>";
+        System.out.println(name + " : " + value);
+      });
+    }
     System.out.println("----------------------------------");
   }
 }

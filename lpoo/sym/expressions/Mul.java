@@ -1,4 +1,8 @@
 package lpoo.sym.expressions;
+/**
+ *
+ * @author Samuel kiyoshi
+ */
 public final class Mul
   extends BinaryExpression
 {

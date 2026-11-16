@@ -1,5 +1,8 @@
 package lpoo.sym.expressions;
-
+/**
+ *
+ * @author Samuel kiyoshi
+ */
 public abstract class Expression
 {
   public abstract float eval(float x,float y,float z);

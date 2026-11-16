@@ -1,5 +1,8 @@
 package lpoo.sym.expressions;
-
+/**
+ *
+ * @author Samuel kiyoshi
+ */
 public final class Constant
   extends Expression
 {

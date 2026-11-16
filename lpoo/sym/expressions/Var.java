@@ -1,5 +1,8 @@
 package lpoo.sym.expressions;
-
+/**
+ *
+ * @author Samuel kiyoshi
+ */
 public final class Var extends Expression {
 
   // As únicas instâncias permitidas no programa inteiro (Singletons)
@@ -9,7 +12,6 @@ public final class Var extends Expression {
 
   private final String name;
 
-  // Construtor privado impede a criação de outras variáveis fora daqui
   private Var(String name) {
     this.name = name;
   }
